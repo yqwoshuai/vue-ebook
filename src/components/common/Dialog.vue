@@ -5,7 +5,8 @@
         <div class="dialog-title-wrapper">
           <span class="dialog-title-text">{{title}}</span>
         </div>
-        <slot></slot>
+        <slot>
+        </slot>
         <div class="dialog-btn-wrapper">
           <slot name="btn">
             <div class="dialog-btn" @click="hide">{{$t('shelf.cancel')}}</div>
@@ -19,6 +20,7 @@
 
 <script>
   export default {
+    name: 'groupDialog',
     props: {
       title: String
     },
@@ -40,6 +42,7 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .dialog {
     position: fixed;
     left: 0;

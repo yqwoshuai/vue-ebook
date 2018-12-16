@@ -25,20 +25,21 @@
   export default {
     mixins: [ebookMixin],
     methods: {
-      back () {
+      back() {
         this.$router.go(-1)
       }
     }
   }
 </script>
 
-<style lang='scss' scoped>
-  @import '../../assets/styles/global';
+<style lang="scss" rel="stylesheet/scss" scoped>
+  @import "../../assets/styles/global";
+
   .title-wrapper {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 201;
+    z-index: 210;
     display: flex;
     width: 100%;
     height: px2rem(48);
@@ -47,7 +48,8 @@
     font-size: px2rem(20);
     .left {
       flex: 0 0 px2rem(60);
-      @include center;
+      @include left;
+      margin-left: px2rem(15);
     }
     .right {
       flex: 1;
@@ -56,10 +58,10 @@
       .icon-wrapper {
         flex: 0 0 px2rem(40);
         @include center;
-        .icon-cart {
+        .icon-shelf {
           font-size: px2rem(22);
         }
-        .icon-shelf {
+        .icon-cart {
           font-size: px2rem(22);
         }
       }

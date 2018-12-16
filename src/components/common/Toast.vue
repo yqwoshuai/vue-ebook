@@ -1,8 +1,6 @@
 <template>
   <transition name="fade">
-    <div class="toast-bg-wrapper"
-         @click.prevent
-         v-show="visible">
+    <div class="toast-bg-wrapper" @click.prevent v-show="visible">
       <div class="toast-bg">
         <div class="toast-wrapper">
           <div class="toast" v-html="showText"></div>
@@ -56,13 +54,14 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .toast-bg-wrapper{
+
+  .toast-bg-wrapper {
     position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 2500;
     width: 100%;
     height: 100%;
-    z-index: 2500;
-    top: 0;
-    left: 0;
     background: transparent;
     .toast-bg {
       position: absolute;

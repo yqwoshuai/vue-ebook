@@ -1,7 +1,7 @@
 import { mapGetters, mapActions } from 'vuex'
-import { themeList, addCss, removeAllCss, getReadTimeByMin } from './book'
-import { getBookmark, saveLocation, saveBookShelf, getBookShelf } from './localStorage'
-import { gotoBookDetail, appendAddToShelf, computedId, removeAddFromShelf } from './store'
+import { themeList, addCss, removeAllCss, getReadTimeByMinute } from './book'
+import { getBookmark, saveLocation, getBookShelf, saveBookShelf } from './localStorage'
+import { gotoBookDetail, appendAddToShelf, computeId, removeAddFromShelf } from './store'
 import { shelf } from '../api/store'
 
 export const storeShelfMixin = {
@@ -12,6 +12,7 @@ export const storeShelfMixin = {
       'shelfSelected',
       'shelfTitleVisible',
       'offsetY',
+      'currentBook',
       'shelfCategory',
       'currentType'
     ])
@@ -26,7 +27,7 @@ export const storeShelfMixin = {
       'setShelfCategory',
       'setCurrentType'
     ]),
-    showBookDetail (book) {
+    showBookDetail(book) {
       gotoBookDetail(this, book)
     },
     getCategoryList(title) {
@@ -49,19 +50,40 @@ export const storeShelfMixin = {
         return this.setShelfList(shelfList)
       }
     },
-    moveOutOfGroup(cb) {
+    moveOutOfGroup(f) {
       this.setShelfList(this.shelfList.map(book => {
         if (book.type === 2 && book.itemList) {
           book.itemList = book.itemList.filter(subBook => !subBook.selected)
         }
         return book
       })).then(() => {
-        const list = computedId(appendAddToShelf([].concat(removeAddFromShelf(this.shelfList), ...this.shelfSelected)))
+        const list = computeId(appendAddToShelf([].concat(
+          removeAddFromShelf(this.shelfList), ...this.shelfSelected)))
         this.setShelfList(list).then(() => {
           this.simpleToast(this.$t('shelf.moveBookOutSuccess'))
-          if (cb) cb()
+          if (f) f()
         })
       })
+    }
+  }
+}
+
+export const storeHomeMixin = {
+  computed: {
+    ...mapGetters([
+      'offsetY',
+      'hotSearchOffsetY',
+      'flapCardVisible'
+    ])
+  },
+  methods: {
+    ...mapActions([
+      'setOffsetY',
+      'setHotSearchOffsetY',
+      'setFlapCardVisible'
+    ]),
+    showBookDetail(book) {
+      gotoBookDetail(this, book)
     }
   }
 }
@@ -88,12 +110,11 @@ export const ebookMixin = {
       'pagelist',
       'offsetY',
       'isBookmark'
-      // 'speakingIconBottom'
     ]),
-    themeList () {
+    themeList() {
       return themeList(this)
     },
-    getSectionName () {
+    getSectionName() {
       return this.section ? this.navigation[this.section].label : ''
     }
   },
@@ -118,9 +139,8 @@ export const ebookMixin = {
       'setPagelist',
       'setOffsetY',
       'setIsBookmark'
-      // 'setSpeakingIconBottom'
     ]),
-    initGlobalStyle () {
+    initGlobalStyle() {
       removeAllCss()
       switch (this.defaultTheme) {
         case 'Default':
@@ -135,9 +155,12 @@ export const ebookMixin = {
         case 'Night':
           addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
           break
+        default:
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
+          break
       }
     },
-    refreshLocation () {
+    refreshLocation() {
       const currentLocation = this.currentBook.rendition.currentLocation()
       if (currentLocation && currentLocation.start) {
         const startCfi = currentLocation.start.cfi
@@ -168,46 +191,26 @@ export const ebookMixin = {
         }
       }
     },
-    display (target, callback) {
+    display(target, cb) {
       if (target) {
         this.currentBook.rendition.display(target).then(() => {
           this.refreshLocation()
-          if (callback) callback()
+          if (cb) cb()
         })
       } else {
         this.currentBook.rendition.display().then(() => {
           this.refreshLocation()
-          if (callback) callback()
+          if (cb) cb()
         })
       }
     },
-    hideTitleAndMenu () {
+    hideTitleAndMenu() {
       this.setMenuVisible(false)
       this.setSettingVisible(-1)
       this.setFontFamilyVisible(false)
     },
-    getReadTimeText () {
-      return this.$t('book.haveRead').replace('$1', getReadTimeByMin(this.fileName))
-    }
-  }
-}
-
-export const storeHomeMixin = {
-  computed: {
-    ...mapGetters([
-      'offsetY',
-      'hotSearchOffsetY',
-      'flapCardVisible'
-    ])
-  },
-  methods: {
-    ...mapActions([
-      'setOffsetY',
-      'setHotSearchOffsetY',
-      'setFlapCardVisible'
-    ]),
-    showBookDetail (book) {
-      gotoBookDetail(this, book)
+    getReadTimeText() {
+      return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
     }
   }
 }

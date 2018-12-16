@@ -39,21 +39,6 @@ $ratio: 375 / 10;
   align-items: center;
 }
 
-@mixin leftBottom {
-  display: flex;
-  justify-content: flex-start;
-  align-items: flex-end;
-}
-
-@mixin scroll {
-  overflow-x: hidden;
-  overflow-y: scroll;
-  -webkit-overflow-scrolling: touch;
-  &::-webkit-scrollbar{
-    display: none;
-  }
-}
-
 @mixin columnTop {
   display: flex;
   flex-direction: column;
@@ -89,6 +74,21 @@ $ratio: 375 / 10;
   overflow: hidden;
   text-overflow: ellipsis;
   word-break: keep-all;
+}
+
+@mixin scroll {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@mixin leftBottom {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
 }
 
 .icon {

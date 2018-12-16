@@ -3,20 +3,20 @@
        :class="{'shelf-item-shadow': data.type === 1 || data.type === 2}"
        @click="onItemClick">
     <component class="shelf-item-comp"
+               :class="{'is-edit': isEditMode && data.type === 2}"
                :is="item"
-               :data="data"
-               :class="{'is-edit': isEditMode && data.type === 2}"></component>
+               :data="data"></component>
     <div class="icon-selected"
-         v-show="isEditMode && data.type === 1"
-         :class="{'is-selected': data.selected}"></div>
+         :class="{'is-selected': data.selected}"
+         v-show="isEditMode && data.type === 1"></div>
   </div>
 </template>
 
 <script>
   import { storeShelfMixin } from '../../utils/mixin'
-  import ShelfBook from '../../components/shelf/ShelfItemBook'
-  import ShelfCategory from '../../components/shelf/ShelfItemCategory'
-  import ShelfAdd from '../../components/shelf/ShelfItemAdd'
+  import ShelfBook from './ShelfItemBook'
+  import ShelfCategory from './ShelfItemCategory'
+  import ShelfAdd from './ShelfItemAdd'
   import { gotoStoreHome } from '../../utils/store'
 
   export default {
@@ -25,11 +25,11 @@
       data: Object
     },
     computed: {
-      item () {
+      item() {
         return this.data.type === 1 ? this.book : (this.data.type === 2 ? this.category : this.add)
       }
     },
-    data () {
+    data() {
       return {
         book: ShelfBook,
         category: ShelfCategory,
@@ -39,12 +39,9 @@
     methods: {
       onItemClick() {
         if (this.isEditMode) {
-          if (this.data.type === 2) {
-            return
-          }
           this.data.selected = !this.data.selected
           if (this.data.selected) {
-            this.shelfSelected.pushWithoutlicate(this.data)
+            this.shelfSelected.pushWithoutDuplicate(this.data)
           } else {
             this.setShelfSelected(this.shelfSelected.filter(item => item.id !== this.data.id))
           }
@@ -67,14 +64,15 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .shelf-item{
+
+  .shelf-item {
+    position: relative;
     width: 100%;
     height: 100%;
-    position: relative;
     &.shelf-item-shadow {
-      box-shadow: px2rem(2) px2rem(2) px2rem(6) px2rem(2) rgba(200,200,200,.3);
+      box-shadow: px2rem(2) px2rem(2) px2rem(6) px2rem(2) rgba(200, 200, 200, .3);
     }
     .shelf-item-comp {
       opacity: 1;
@@ -87,8 +85,8 @@
       bottom: px2rem(2);
       right: px2rem(2);
       font-size: px2rem(18);
-      color: rgba(0,0,0,.4);
-      &.is-selected{
+      color: rgba(0, 0, 0, .4);
+      &.is-selected {
         color: $color-blue;
       }
     }

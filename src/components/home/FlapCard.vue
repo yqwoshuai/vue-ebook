@@ -20,7 +20,7 @@
         </div>
         <div class="content-wrapper">
           <div class="content-title">{{data ? data.title : ''}}</div>
-          <div class="content-author">{{data ? data.author : ''}}</div>
+          <div class="content-author sub-title-medium">{{data ? data.author : ''}}</div>
           <div class="content-category">{{categoryText()}}</div>
         </div>
         <div class="read-btn" @click.stop="showBookDetail(data)">{{$t('home.readNow')}}</div>
@@ -34,13 +34,14 @@
 
 <script>
   import { storeHomeMixin } from '../../utils/mixin'
-  import { categoryText, flapCardList } from '../../utils/store'
+  import { flapCardList, categoryText } from '../../utils/store'
+
   export default {
     mixins: [storeHomeMixin],
     props: {
       data: Object
     },
-    data () {
+    data() {
       return {
         flapCardList,
         front: 0,
@@ -53,25 +54,25 @@
       }
     },
     watch: {
-      flapCardVisible (v) {
+      flapCardVisible(v) {
         if (v) {
           this.runAnimation()
         }
       }
     },
     methods: {
-      close () {
+      close() {
         this.stopAnimation()
         this.setFlapCardVisible(false)
       },
-      semiCircleStyle (item, dir) {
+      semiCircleStyle(item, dir) {
         return {
           backgroundColor: `rgb(${item.r}, ${item.g}, ${item.b})`,
           backgroundSize: item.backgroundSize,
           backgroundImage: dir === 'left' ? item.imgLeft : item.imgRight
         }
       },
-      rotate (index, type) {
+      rotate(index, type) {
         const item = this.flapCardList[index]
         let dom
         if (type === 'front') {
@@ -82,7 +83,7 @@
         dom.style.transform = `rotateY(${item.rotateDegree}deg)`
         dom.style.backgroundColor = `rgb(${item.r}, ${item._g}, ${item.b})`
       },
-      flapCardRotate () {
+      flapCardRotate() {
         const frontFlapCard = this.flapCardList[this.front]
         const backFlapCard = this.flapCardList[this.back]
         frontFlapCard.rotateDegree += 10
@@ -100,7 +101,7 @@
           this.next()
         }
       },
-      next () {
+      next() {
         const frontFlapCard = this.flapCardList[this.front]
         const backFlapCard = this.flapCardList[this.back]
         frontFlapCard.rotateDegree = 0
@@ -118,18 +119,26 @@
         if (this.back >= len) {
           this.back = 0
         }
+        // 动态设置zIndex
+        // 100 -> 96
+        // 99 -> 100
+        // 98 -> 99
+        // 97 -> 98
+        // 96 -> 97
+        // (0 - 1 + 5) % 5 = 4
+        // (1 - 1 + 5) % 5 = 0
         this.flapCardList.forEach((item, index) => {
           item.zIndex = 100 - ((index - this.front + len) % len)
         })
         this.prepare()
       },
-      prepare () {
+      prepare() {
         const backFlapCard = this.flapCardList[this.back]
         backFlapCard.rotateDegree = 180
         backFlapCard._g = backFlapCard.g - 5 * 9
         this.rotate(this.back, 'back')
       },
-      reset () {
+      reset() {
         this.front = 0
         this.back = 1
         this.flapCardList.forEach((item, index) => {
@@ -143,19 +152,19 @@
         this.runFlapCardAnimation = false
         this.runPointAnimation = false
       },
-      startFlapCardAnimation () {
+      startFlapCardAnimation() {
         this.prepare()
         this.task = setInterval(() => {
           this.flapCardRotate()
         }, this.intervalTime)
       },
-      startPointAnimation () {
+      startPointAnimation() {
         this.runPointAnimation = true
         setTimeout(() => {
           this.runPointAnimation = false
         }, 750)
       },
-      stopAnimation () {
+      stopAnimation() {
         if (this.task) {
           clearInterval(this.task)
         }
@@ -167,7 +176,7 @@
         }
         this.reset()
       },
-      runAnimation () {
+      runAnimation() {
         this.runFlapCardAnimation = true
         this.timeout = setTimeout(() => {
           this.startFlapCardAnimation()
@@ -178,7 +187,7 @@
           this.runBookCardAnimation = true
         }, 2500)
       },
-      categoryText () {
+      categoryText() {
         if (this.data) {
           return categoryText(this.data.category, this)
         } else {
@@ -186,7 +195,7 @@
         }
       }
     },
-    created () {
+    created() {
       this.pointList = []
       for (let i = 0; i < 18; i++) {
         this.pointList.push(`point${i}`)
@@ -198,6 +207,7 @@
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
   @import "../../assets/styles/flapCard";
+
   .flap-card-wrapper {
     z-index: 1000;
     width: 100%;
@@ -300,7 +310,7 @@
       .book-card-wrapper {
         width: 100%;
         height: 100%;
-        margin-bottom: px2rem(52);
+        margin-bottom: px2rem(30);
         @include columnTop;
         .img-wrapper {
           width: 100%;
@@ -317,15 +327,14 @@
           .content-title {
             color: #333;
             font-weight: bold;
-            font-size: px2rem(20);
-            line-height: px2rem(22);
+            font-size: px2rem(18);
+            line-height: px2rem(20);
+            max-height: px2rem(40);
             text-align: center;
             @include ellipsis2(2)
           }
           .content-author {
-            font-size: px2rem(16);
             margin-top: px2rem(10);
-            @include ellipsis2(3);
             text-align: center;
           }
           .content-category {

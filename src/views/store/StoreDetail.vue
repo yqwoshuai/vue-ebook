@@ -80,11 +80,16 @@
   import Toast from '../../components/common/Toast'
   import { detail } from '../../api/store'
   import { px2rem, realPx } from '../../utils/utils'
+  import { getLocalForage } from '../../utils/localForage'
+  import { removeFromBookShelf, addToShelf } from '../../utils/store'
+  import { storeShelfMixin } from '../../utils/mixin'
+  import { getBookShelf, saveBookShelf } from '../../utils/localStorage'
   import Epub from 'epubjs'
 
   global.ePub = Epub
 
   export default {
+    mixins: [storeShelfMixin],
     components: {
       DetailTitle,
       Scroll,
@@ -92,40 +97,40 @@
       Toast
     },
     computed: {
-      desc () {
+      desc() {
         if (this.description) {
           return this.description.substring(0, 100)
         } else {
           return ''
         }
       },
-      flatNavigation () {
+      flatNavigation() {
         if (this.navigation) {
           return Array.prototype.concat.apply([], Array.prototype.concat.apply([], this.doFlatNavigation(this.navigation.toc)))
         } else {
           return []
         }
       },
-      lang () {
+      lang() {
         return this.metadata ? this.metadata.language : '-'
       },
-      isbn () {
+      isbn() {
         return this.metadata ? this.metadata.identifier : '-'
       },
-      publisher () {
+      publisher() {
         return this.metadata ? this.metadata.publisher : '-'
       },
-      title () {
+      title() {
         return this.metadata ? this.metadata.title : ''
       },
-      author () {
+      author() {
         return this.metadata ? this.metadata.creator : ''
       },
-      inBookShelf () {
-        if (this.bookItem && this.bookShelf) {
-          const flatShelf = (function flatten (arr) {
+      inBookShelf() {
+        if (this.bookItem && this.shelfList) {
+          const flatShelf = (function flatten(arr) {
             return [].concat(...arr.map(v => v.itemList ? [v, ...flatten(v.itemList)] : v))
-          })(this.bookShelf).filter(item => item.type === 1)
+          })(this.shelfList).filter(item => item.type === 1)
           const book = flatShelf.filter(item => item.fileName === this.bookItem.fileName)
           return book && book.length > 0
         } else {
@@ -133,7 +138,7 @@
         }
       }
     },
-    data () {
+    data() {
       return {
         bookItem: null,
         book: null,
@@ -152,30 +157,56 @@
       }
     },
     methods: {
-      addOrRemoveShelf () {
+      addOrRemoveShelf() {
+        if (this.inBookShelf) {
+          this.setShelfList(removeFromBookShelf(this.bookItem)).then(() => {
+            saveBookShelf(this.shelfList)
+          })
+        } else {
+          addToShelf(this.bookItem)
+          this.setShelfList(getBookShelf())
+        }
       },
-      showToast (text) {
+      showToast(text) {
         this.toastText = text
         this.$refs.toast.show()
       },
-      readBook () {
+      readBook() {
+        this.$router.push({
+          path: `/ebook/${this.bookItem.categoryText}|${this.fileName}`
+        })
+      },
+      trialListening() {
+        getLocalForage(this.bookItem.fileName, (err, blob) => {
+          if (!err && blob && blob instanceof Blob) {
+            this.$router.push({
+              path: '/store/speaking',
+              query: {
+                fileName: this.bookItem.fileName
+              }
+            })
+          } else {
+            this.$router.push({
+              path: '/store/speaking',
+              query: {
+                fileName: this.bookItem.fileName,
+                opf: this.opf
+              }
+            })
+          }
+        })
+      },
+      read(item) {
         this.$router.push({
           path: `/ebook/${this.categoryText}|${this.fileName}`
         })
       },
-      trialListening () {
-      },
-      read (item) {
-        this.$router.push({
-          path: `/ebook/${this.categoryText}|${this.fileName}`
-        })
-      },
-      itemStyle (item) {
+      itemStyle(item) {
         return {
           marginLeft: (item.deep - 1) * px2rem(20) + 'rem'
         }
       },
-      doFlatNavigation (content, deep = 1) {
+      doFlatNavigation(content, deep = 1) {
         const arr = []
         content.forEach(item => {
           item.deep = deep
@@ -186,11 +217,11 @@
         })
         return arr
       },
-      downloadBook () {
+      downloadBook() {
         const opf = `${process.env.VUE_APP_EPUB_URL}/${this.bookItem.categoryText}/${this.bookItem.fileName}/OEBPS/package.opf`
         this.parseBook(opf)
       },
-      parseBook (url) {
+      parseBook(url) {
         this.book = new Epub(url)
         this.book.loaded.metadata.then(metadata => {
           this.metadata = metadata
@@ -213,7 +244,7 @@
           }
         })
       },
-      init () {
+      init() {
         this.fileName = this.$route.query.fileName
         this.categoryText = this.$route.query.category
         if (this.fileName) {
@@ -236,10 +267,10 @@
           })
         }
       },
-      back () {
+      back() {
         this.$router.go(-1)
       },
-      display (location) {
+      display(location) {
         if (this.$refs.preview) {
           if (!this.rendition) {
             this.rendition = this.book.renderTo('preview', {
@@ -255,7 +286,7 @@
           }
         }
       },
-      onScroll (offsetY) {
+      onScroll(offsetY) {
         if (offsetY > realPx(42)) {
           this.$refs.title.showShadow()
         } else {
@@ -263,8 +294,11 @@
         }
       }
     },
-    mounted () {
+    mounted() {
       this.init()
+      if (!this.shelfList || this.shelfList.length === 0) {
+        this.getShelfList()
+      }
     }
   }
 </script>

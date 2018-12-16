@@ -12,28 +12,29 @@
   </div>
 </template>
 
-<script>
-  import Scroll from '../../components/common/Scroll'
+<script type="text/ecmascript-6">
+  import Scroll from '../common/Scroll'
   import { getBookmark } from '../../utils/localStorage'
   import { ebookMixin } from '../../utils/mixin'
+
   export default {
     mixins: [ebookMixin],
     components: {
       Scroll
     },
-    data () {
+    data() {
       return {
         bookmark: null
       }
     },
     methods: {
-      displayBookmark (target) {
+      displayBookmark(target) {
         this.display(target, () => {
           this.hideTitleAndMenu()
         })
       }
     },
-    mounted () {
+    mounted() {
       this.bookmark = getBookmark(this.fileName)
     }
   }
@@ -41,6 +42,7 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .ebook-slide-bookmark {
     width: 100%;
     .slide-bookmark-title {

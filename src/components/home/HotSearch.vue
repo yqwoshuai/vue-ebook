@@ -20,14 +20,15 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import { realPx } from '../../utils/utils'
+  import { realPx } from '@/utils/utils'
+
   export default {
     props: {
       label: String,
       btn: String,
       hotSearch: Array
     },
-    mounted () {
+    mounted() {
       this.$refs.searchText.forEach(item => {
         item.style.width = window.innerWidth - realPx(20) - realPx(40) + 'px'
       })
@@ -37,6 +38,7 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .hot-search-title {
     display: flex;
     width: 100%;

@@ -30,7 +30,7 @@
       EbookFooter
     },
     watch: {
-      offsetY (v) {
+      offsetY(v) {
         if (!this.menuVisible && this.bookAvailable) {
           if (v > 0) {
             this.move(v)
@@ -41,17 +41,17 @@
       }
     },
     methods: {
-      move (v) {
-        this.$refs.ebook.style.top = v + 'px'
-      },
-      restore () {
+      restore() {
         this.$refs.ebook.style.top = 0
         this.$refs.ebook.style.transition = 'all .2s linear'
         setTimeout(() => {
           this.$refs.ebook.style.transition = ''
         }, 200)
       },
-      startLoopReadTime () {
+      move(v) {
+        this.$refs.ebook.style.top = v + 'px'
+      },
+      startLoopReadTime() {
         let readTime = getReadTime(this.fileName)
         if (!readTime) {
           readTime = 0
@@ -64,10 +64,10 @@
         }, 1000)
       }
     },
-    mounted () {
+    mounted() {
       this.startLoopReadTime()
     },
-    beforeDestroy () {
+    beforeDestroy() {
       if (this.task) {
         clearInterval(this.task)
       }
@@ -75,13 +75,14 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .ebook {
-    width: 100%;
-    height: 100%;
     position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
   }
 </style>

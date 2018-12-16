@@ -38,58 +38,59 @@
   export default {
     mixins: [ebookMixin],
     methods: {
-      onProgressChange (progress) {
-        this.setProgress(progress).then(() => {
-          this.displayProgress()
-        })
-      },
-      onProgressInput (progress) {
+      onProgressChange(progress) {
         this.setProgress(progress).then(() => {
           this.displayProgress()
           this.updateProgressBg()
         })
       },
-      displayProgress () {
+      onProgressInput(progress) {
+        this.setProgress(progress).then(() => {
+          this.updateProgressBg()
+        })
+      },
+      displayProgress() {
         const cfi = this.currentBook.locations.cfiFromPercentage(this.progress / 100)
         this.display(cfi)
       },
-      updateProgressBg () {
+      updateProgressBg() {
         this.$refs.progress.style.backgroundSize = `${this.progress}% 100%`
       },
-      prevSection () {
+      prevSection() {
         if (this.section > 0 && this.bookAvailable) {
           this.setSection(this.section - 1).then(() => {
             this.displaySection()
           })
         }
       },
-      nextSection () {
+      nextSection() {
         if (this.section < this.currentBook.spine.length - 1 && this.bookAvailable) {
           this.setSection(this.section + 1).then(() => {
             this.displaySection()
           })
         }
       },
-      displaySection () {
+      displaySection() {
         const sectionInfo = this.currentBook.section(this.section)
         if (sectionInfo && sectionInfo.href) {
           this.display(sectionInfo.href)
         }
       }
     },
-    updated () {
+    updated() {
       this.updateProgressBg()
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .setting-wrapper {
     position: absolute;
     bottom: px2rem(48);
     left: 0;
-    z-index: 101;
+    z-index: 160;
     width: 100%;
     height: px2rem(90);
     background: white;
@@ -98,14 +99,14 @@
       position: relative;
       width: 100%;
       height: 100%;
-      .read-time-wrapper{
+      .read-time-wrapper {
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
-        @include center;
         height: px2rem(40);
         font-size: px2rem(12);
+        @include center;
       }
       .progress-wrapper {
         width: 100%;
@@ -113,7 +114,7 @@
         @include center;
         padding: 0 px2rem(15);
         box-sizing: border-box;
-        .progress-icon-wrapper{
+        .progress-icon-wrapper {
           font-size: px2rem(20);
         }
         .progress {
@@ -146,7 +147,7 @@
         box-sizing: border-box;
         @include center;
         .progress-section-text {
-          @include ellipsis
+          @include ellipsis;
         }
       }
     }

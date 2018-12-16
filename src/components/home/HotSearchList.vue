@@ -19,13 +19,14 @@
   import Scroll from '../common/Scroll'
   import HotSearch from './HotSearch'
   import { storeHomeMixin } from '../../utils/mixin'
+
   export default {
     mixins: [storeHomeMixin],
     components: {
       Scroll,
       HotSearch
     },
-    data () {
+    data() {
       return {
         searchList: {
           hotSearch: [
@@ -125,10 +126,10 @@
       }
     },
     methods: {
-      onScroll (offsetY) {
+      onScroll(offsetY) {
         this.setHotSearchOffsetY(offsetY)
       },
-      reset () {
+      reset() {
         this.$refs.scroll.scrollTo(0, 0)
       }
     }
@@ -137,6 +138,7 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .hot-search-wrapper {
     width: 100%;
     height: 100%;

@@ -1,9 +1,63 @@
-export function computedId(list) {
+import { getLocalStorage, getBookShelf, saveBookShelf } from './localStorage'
+
+export function addToShelf(book) {
+  let shelfList = getBookShelf()
+  shelfList = removeAddFromShelf(shelfList)
+  book.type = 1
+  shelfList.push(book)
+  shelfList = computeId(shelfList)
+  shelfList = appendAddToShelf(shelfList)
+  saveBookShelf(shelfList)
+}
+
+export function removeFromBookShelf(book) {
+  return getBookShelf().filter(item => {
+    if (item.itemList) {
+      item.itemList = removeAddFromShelf(item.itemList)
+    }
+    return item.fileName !== book.fileName
+  })
+}
+
+export function flatBookList(bookList) {
+  if (bookList) {
+    let orgBookList = bookList.filter(item => {
+      return item.type !== 3
+    })
+    const categoryList = bookList.filter(item => {
+      return item.type === 2
+    })
+    categoryList.forEach(item => {
+      const index = orgBookList.findIndex(v => {
+        return v.id === item.id
+      })
+      if (item.itemList) {
+        item.itemList.forEach(subItem => {
+          orgBookList.splice(index, 0, subItem)
+        })
+      }
+    })
+    orgBookList.forEach((item, index) => {
+      item.id = index + 1
+    })
+    orgBookList = orgBookList.filter(item => item.type !== 2)
+    return orgBookList
+  } else {
+    return []
+  }
+}
+
+export function findBook(fileName) {
+  const bookList = getLocalStorage('shelf')
+  return flatBookList(bookList).find(item => item.fileName === fileName)
+}
+
+export function computeId(list) {
   return list.map((book, index) => {
     if (book.type !== 3) {
       book.id = index + 1
       if (book.itemList) {
-        book.itemList = computedId(book.itemList)
+        book.itemList = computeId(book.itemList)
       }
     }
     return book
@@ -121,7 +175,7 @@ export const categoryList = {
   'Statistics': 22
 }
 
-export function getCategoryName (id) {
+export function getCategoryName(id) {
   switch (id) {
     case 1:
       return 'ComputerScience'
@@ -170,7 +224,7 @@ export function getCategoryName (id) {
   }
 }
 
-export function categoryText (category, vue) {
+export function categoryText(category, vue) {
   switch (category) {
     case 1:
       return vue.$t('category.computerScience')

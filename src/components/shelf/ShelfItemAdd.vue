@@ -8,9 +8,9 @@
   export default {}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .shelf-item-add{
+  .shelf-item-add {
     width: 100%;
     height: 100%;
     border: px2rem(1) solid #ccc;

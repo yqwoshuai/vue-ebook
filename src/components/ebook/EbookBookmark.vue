@@ -13,28 +13,39 @@
 </template>
 
 <script>
-  import Bookmark from '../common/Bookmark'
   import { realPx } from '../../utils/utils'
+  import Bookmark from '../common/Bookmark'
   import { ebookMixin } from '../../utils/mixin'
   import { getBookmark, saveBookmark } from '../../utils/localStorage'
 
-  const BLUE = '#346cba'
+  const BLUE = '#346cbc'
   const WHITE = '#fff'
   export default {
     mixins: [ebookMixin],
-    data () {
-      return {
-        text: '',
-        color: WHITE,
-        isFixed: false
+    components: {
+      Bookmark
+    },
+    computed: {
+      height() {
+        return realPx(35)
+      },
+      threshold() {
+        return realPx(55)
+      },
+      fixedStyle() {
+        return {
+          position: 'fixed',
+          top: 0,
+          right: `${(window.innerWidth - this.$refs.bookmark.clientWidth) / 2}px`
+        }
       }
     },
     watch: {
-      offsetY (v) {
-        if (!this.bookAvailable || this.menuVisible || this.settingVisible > 0) {
+      offsetY(v) {
+        if (!this.bookAvailable || this.menuVisible || this.settingVisible >= 0) {
           return
         }
-        if (v >= this.height && v <= this.threshold) {
+        if (v >= this.height && v < this.threshold) {
           this.beforeThreshold(v)
         } else if (v >= this.threshold) {
           this.afterThreshold(v)
@@ -44,7 +55,7 @@
           this.restore()
         }
       },
-      isBookmark (isBookmark) {
+      isBookmark(isBookmark) {
         this.isFixed = isBookmark
         if (isBookmark) {
           this.color = BLUE
@@ -53,35 +64,15 @@
         }
       }
     },
-    components: {
-      Bookmark
-    },
-    computed: {
-      height () {
-        return realPx(35)
-      },
-      threshold () {
-        return realPx(55)
-      },
-      fixedStyle () {
-        return {
-          position: 'fixed',
-          top: 0,
-          right: `${(window.innerWidth - this.$refs.bookmark.clientWidth) / 2}px`
-        }
+    data() {
+      return {
+        text: '',
+        color: WHITE,
+        isFixed: false
       }
     },
     methods: {
-      removeBookmark () {
-        const currentLocation = this.currentBook.rendition.currentLocation()
-        const cfi = currentLocation.start.cfi
-        this.bookmark = getBookmark(this.fileName)
-        if (this.bookmark) {
-          saveBookmark(this.fileName, this.bookmark.filter(item => item.cfi !== cfi))
-          this.setIsBookmark(false)
-        }
-      },
-      addBookmark () {
+      addBookmark() {
         this.bookmark = getBookmark(this.fileName)
         if (!this.bookmark) {
           this.bookmark = []
@@ -100,20 +91,31 @@
           saveBookmark(this.fileName, this.bookmark)
         })
       },
-      restore () {
+      removeBookmark() {
+        const currentLocation = this.currentBook.rendition.currentLocation()
+        const cfi = currentLocation.start.cfi
+        this.bookmark = getBookmark(this.fileName)
+        if (this.bookmark) {
+          saveBookmark(this.fileName, this.bookmark.filter(item => item.cfi !== cfi))
+          this.setIsBookmark(false)
+        }
+      },
+      restore() {
+        // 状态4：归位
         setTimeout(() => {
           this.$refs.bookmark.style.top = `${-this.height}px`
-          this.$refs.iconDown.style.transform = `rotate(0deg)`
+          this.$refs.iconDown.style.transform = 'rotate(0deg)'
         }, 200)
         if (this.isFixed) {
           this.setIsBookmark(true)
-          this.addBookmark(true)
+          this.addBookmark()
         } else {
           this.setIsBookmark(false)
-          this.removeBookmark(true)
+          this.removeBookmark()
         }
       },
-      beforeHeight () {
+      beforeHeight() {
+        // 状态1：未超过书签的高度
         if (this.isBookmark) {
           this.text = this.$t('book.pulldownDeleteMark')
           this.color = BLUE
@@ -124,7 +126,8 @@
           this.isFixed = false
         }
       },
-      beforeThreshold (v) {
+      beforeThreshold(v) {
+        // 状态2：未到达零界状态
         this.$refs.bookmark.style.top = `${-v}px`
         this.beforeHeight()
         const iconDown = this.$refs.iconDown
@@ -132,7 +135,8 @@
           iconDown.style.transform = 'rotate(0deg)'
         }
       },
-      afterThreshold (v) {
+      afterThreshold(v) {
+        // 状态3：超越零界状态
         this.$refs.bookmark.style.top = `${-v}px`
         if (this.isBookmark) {
           this.text = this.$t('book.releaseDeleteMark')
@@ -144,7 +148,8 @@
           this.isFixed = true
         }
         const iconDown = this.$refs.iconDown
-        if (iconDown.style.transform === '' || iconDown.style.transform === 'rotate(0deg)') {
+        if (iconDown.style.transform === '' ||
+          iconDown.style.transform === 'rotate(0deg)') {
           iconDown.style.transform = 'rotate(180deg)'
         }
       }
@@ -152,8 +157,9 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .ebook-bookmark {
     position: absolute;
     top: px2rem(-35);

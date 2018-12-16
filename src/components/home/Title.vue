@@ -1,7 +1,7 @@
 <template>
   <div class="home-title-wrapper">
     <div class="label">{{label}}</div>
-    <div class="btn" @click="click">{{btn}}</div>
+    <div class="btn" @click="click" v-if="btnShow">{{btn}}</div>
   </div>
 </template>
 
@@ -9,10 +9,14 @@
   export default {
     props: {
       label: String,
-      btn: String
+      btn: String,
+      btnShow: {
+        default: true,
+        type: Boolean
+      }
     },
     methods: {
-      click () {
+      click() {
         this.$emit('onClick')
       }
     }
@@ -34,7 +38,6 @@
     }
     .btn {
       font-size: px2rem(14);
-      margin-top: px2rem(2);
       color: rgba(64, 158, 255, 1);
       &:active {
         color: rgba(64, 158, 255, .5);

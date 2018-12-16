@@ -28,30 +28,20 @@
   import Featured from '../../components/home/Featured'
   import CategoryBook from '../../components/home/CategoryBook'
   import Category from '../../components/home/Category'
+
   export default {
     mixins: [storeHomeMixin],
     components: {
+      Category,
+      CategoryBook,
+      Featured,
+      Recommend,
+      GuessYouLike,
       SearchBar,
       Scroll,
-      FlapCard,
-      GuessYouLike,
-      Recommend,
-      Featured,
-      CategoryBook,
-      Category
+      FlapCard
     },
-    methods: {
-      onScroll (offsetY) {
-        this.setOffsetY(offsetY)
-        if (offsetY > 0) {
-          this.scrollTop = 52
-        } else {
-          this.scrollTop = 94
-        }
-        this.$refs.scroll.refresh()
-      }
-    },
-    data () {
+    data() {
       return {
         scrollTop: 94,
         random: null,
@@ -63,10 +53,21 @@
         categories: null
       }
     },
-    mounted () {
-      home().then((res) => {
-        if (res && res.status === 200) {
-          const data = res.data
+    methods: {
+      onScroll(offsetY) {
+        this.setOffsetY(offsetY)
+        if (offsetY > 0) {
+          this.scrollTop = 52
+        } else {
+          this.scrollTop = 94
+        }
+        this.$refs.scroll.refresh()
+      }
+    },
+    mounted() {
+      home().then(response => {
+        if (response && response.status === 200) {
+          const data = response.data
           const randomIndex = Math.floor(Math.random() * data.random.length)
           this.random = data.random[randomIndex]
           this.banner = data.banner
@@ -81,23 +82,33 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .store-home{
+
+  .store-home {
     width: 100%;
     height: 100%;
     .banner-wrapper {
       width: 100%;
       padding: px2rem(10);
       box-sizing: border-box;
-      .banner-img{
+      .banner-img {
         width: 100%;
         height: px2rem(150);
         background-repeat: no-repeat;
         background-size: 100% 100%;
       }
     }
-    .recommend,.featured,.category-list-wrapper,.categories{
+    .recommend {
+      margin-top: px2rem(20);
+    }
+    .featured {
+      margin-top: px2rem(20);
+    }
+    .category-list-wrapper {
+      margin-top: px2rem(20);
+    }
+    .categories {
       margin-top: px2rem(20);
     }
   }

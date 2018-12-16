@@ -14,7 +14,7 @@ export default new Router({
       component: () => import('./views/ebook/index.vue'),
       children: [
         {
-          path: ':filename',
+          path: ':fileName',
           component: () => import('./components/ebook/EbookReader.vue')
         }
       ]
@@ -25,12 +25,16 @@ export default new Router({
       redirect: '/store/shelf',
       children: [
         {
-          path: 'home',
-          component: () => import('./views/store/StoreHome.vue')
+          path: 'shelf',
+          component: () => import('./views/store/StoreShelf.vue')
         },
         {
           path: 'category',
           component: () => import('./views/store/StoreCategory.vue')
+        },
+        {
+          path: 'home',
+          component: () => import('./views/store/StoreHome.vue')
         },
         {
           path: 'list',
@@ -41,8 +45,8 @@ export default new Router({
           component: () => import('./views/store/StoreDetail.vue')
         },
         {
-          path: 'shelf',
-          component: () => import('./views/store/StoreShelf.vue')
+          path: 'speaking',
+          component: () => import('./views/store/StoreSpeaking.vue')
         }
       ]
     }

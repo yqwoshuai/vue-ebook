@@ -6,15 +6,18 @@
         <span class="shelf-title-sub-text" v-show="isEditMode">{{selectedText}}</span>
       </div>
       <div class="shelf-title-btn-wrapper shelf-title-left" v-if="showClear">
-        <span class="shelf-title-btn-text" @click="chearCache">{{$t('shelf.clearCache')}}</span>
+        <span class="shelf-title-btn-text" @click="clearCache">{{$t('shelf.clearCache')}}</span>
       </div>
       <div class="shelf-title-btn-wrapper shelf-title-right" v-if="showEdit">
-        <span class="shelf-title-btn-text" @click="onEditClick">{{isEditMode ? $t('shelf.cancel') : $t('shelf.edit')}}</span>
+        <span class="shelf-title-btn-text"
+              @click="onEditClick">{{isEditMode ? $t('shelf.cancel') : $t('shelf.edit')}}</span>
       </div>
       <div class="shelf-title-btn-wrapper shelf-title-left" v-if="showBack">
         <span class="icon-back" @click="back"></span>
       </div>
-      <div class="shelf-title-btn-wrapper" :class="{'shelf-title-left': changeGroupLeft, 'shelf-title-right': changeGroupRight}" @click="changeGroup" v-if="showChangeGroup">
+      <div class="shelf-title-btn-wrapper"
+           :class="{'shelf-title-left': changeGroupLeft, 'shelf-title-right': changeGroupRight}" @click="changeGroup"
+           v-if="showChangeGroup">
         <span class="shelf-title-btn-text">{{$t('shelf.editGroup')}}</span>
       </div>
     </div>
@@ -32,32 +35,32 @@
       title: String
     },
     computed: {
-      emptyCategory () {
+      emptyCategory() {
         return !this.shelfCategory || !this.shelfCategory.itemList || this.shelfCategory.itemList.length === 0
       },
-      showEdit () {
+      showEdit() {
         return this.currentType === 1 || !this.emptyCategory
       },
-      showClear () {
+      showClear() {
         return this.currentType === 1
       },
-      showBack () {
+      showBack() {
         return this.currentType === 2 && !this.isEditMode
       },
-      showChangeGroup () {
+      showChangeGroup() {
         return this.currentType === 2 && (this.isEditMode || this.emptyCategory)
       },
-      changeGroupLeft () {
+      changeGroupLeft() {
         return !this.emptyCategory
       },
-      changeGroupRight () {
+      changeGroupRight() {
         return this.emptyCategory
       },
-      selectedText () {
+      selectedText() {
         const selectedNumber = this.shelfSelected ? this.shelfSelected.length : 0
         return selectedNumber <= 0 ? this.$t('shelf.selectBook') : (selectedNumber === 1 ? this.$t('shelf.haveSelectedBook').replace('$1', selectedNumber) : this.$t('shelf.haveSelectedBooks').replace('$1', selectedNumber))
       },
-      popupCancelBtn () {
+      popupCancelBtn() {
         return this.createPopupBtn(this.$t('shelf.cancel'), () => {
           this.hidePopup()
         })
@@ -72,13 +75,13 @@
         }
       }
     },
-    data () {
+    data() {
       return {
         ifHideShadow: true
       }
     },
     methods: {
-      onComplete () {
+      onComplete() {
         this.hidePopup()
         this.setShelfList(this.shelfList.filter(book => book.id !== this.shelfCategory.id)).then(() => {
           saveBookShelf(this.shelfList)
@@ -86,7 +89,7 @@
           this.setIsEditMode(false)
         })
       },
-      deleteGroup () {
+      deleteGroup() {
         if (!this.emptyCategory) {
           this.setShelfSelected(this.shelfCategory.itemList)
           this.moveOutOfGroup(this.onComplete)
@@ -94,14 +97,24 @@
           this.onComplete()
         }
       },
-      changeGroupName () {
+      changeGroupName() {
         this.hidePopup()
         this.dialog({
           showNewGroup: true,
           groupName: this.shelfCategory.title
         }).show()
       },
-      showDeleteGroup () {
+      hidePopup() {
+        this.popupMenu.hide()
+      },
+      createPopupBtn(text, onClick, type = 'normal') {
+        return {
+          text: text,
+          type: type,
+          click: onClick
+        }
+      },
+      showDeleteGroup() {
         this.hidePopup()
         setTimeout(() => {
           this.popupMenu = this.popup({
@@ -115,17 +128,7 @@
           }).show()
         }, 200)
       },
-      hidePopup() {
-        this.popupMenu.hide()
-      },
-      createPopupBtn(text, onClick, type = 'normal') {
-        return {
-          text: text,
-          type: type,
-          click: onClick
-        }
-      },
-      changeGroup () {
+      changeGroup() {
         this.popupMenu = this.popup({
           btn: [
             this.createPopupBtn(this.$t('shelf.editGroupName'), () => {
@@ -138,11 +141,11 @@
           ]
         }).show()
       },
-      back () {
+      back() {
         this.$router.go(-1)
         this.setIsEditMode(false)
       },
-      onEditClick () {
+      onEditClick() {
         if (!this.isEditMode) {
           this.setShelfSelected([])
           this.shelfList.forEach(item => {
@@ -156,9 +159,9 @@
         }
         this.setIsEditMode(!this.isEditMode)
       },
-      chearCache () {
-        clearLocalForage()
+      clearCache() {
         clearLocalStorage()
+        clearLocalForage()
         this.setShelfList([])
         this.setShelfSelected([])
         this.getShelfList()
@@ -168,16 +171,17 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .shelf-title {
     position: relative;
     z-index: 130;
     width: 100%;
     height: px2rem(42);
     background: white;
-    box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0,0,0,.1);
-    &.hide-shadow{
+    box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0, 0, 0, .1);
+    &.hide-shadow {
       box-shadow: none;
     }
     .shelf-title-text-wrapper {
@@ -187,13 +191,13 @@
       width: 100%;
       height: px2rem(42);
       @include columnCenter;
-      .shelf-title-text{
+      .shelf-title-text {
         font-size: px2rem(16);
         line-height: px2rem(20);
         font-weight: bold;
         color: #333;
       }
-      .shelf-title-sub-text{
+      .shelf-title-sub-text {
         font-size: px2rem(10);
         color: #333;
       }
@@ -204,7 +208,7 @@
       box-sizing: border-box;
       height: 100%;
       @include center;
-      .shelf-title-btn-text{
+      .shelf-title-btn-text {
         font-size: px2rem(14);
         color: #666;
       }
@@ -212,11 +216,11 @@
         font-size: px2rem(20);
         color: #666;
       }
-      &.shelf-title-left{
+      &.shelf-title-left {
         left: 0;
         padding-left: px2rem(15);
       }
-      &.shelf-title-right{
+      &.shelf-title-right {
         right: 0;
         padding-right: px2rem(15);
       }

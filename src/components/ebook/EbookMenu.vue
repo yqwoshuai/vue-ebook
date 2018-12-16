@@ -1,7 +1,7 @@
 <template>
   <div>
     <transition name="slide-up">
-      <div class="menu-wrapper" :class="{'hide-box-shadow': !menuVisible || settingVisible >= 0 }" v-show="menuVisible">
+      <div class="menu-wrapper" :class="{'hide-box-shadow': !menuVisible || settingVisible >= 0}" v-show="menuVisible">
         <div class="icon-wrapper">
           <span class="icon-menu" @click="showSetting(3)"></span>
         </div>
@@ -19,7 +19,7 @@
     <ebook-setting-font></ebook-setting-font>
     <ebook-setting-font-popup></ebook-setting-font-popup>
     <ebook-setting-theme></ebook-setting-theme>
-    <ebook-setting-progress></ebook-setting-progress>
+    <ebook-setting-progess></ebook-setting-progess>
     <ebook-slide></ebook-slide>
   </div>
 </template>
@@ -28,29 +28,30 @@
   import EbookSettingFont from './EbookSettingFont'
   import EbookSettingFontPopup from './EbookSettingFontPopup'
   import EbookSettingTheme from './EbookSettingTheme'
-  import EbookSettingProgress from './EbookSettingProgress'
+  import EbookSettingProgess from './EbookSettingProgress'
   import EbookSlide from './EbookSlide'
   import { ebookMixin } from '../../utils/mixin'
 
   export default {
     mixins: [ebookMixin],
-    methods: {
-      showSetting (key) {
-        this.setSettingVisible(key)
-      }
-    },
     components: {
       EbookSettingFont,
       EbookSettingFontPopup,
       EbookSettingTheme,
-      EbookSettingProgress,
+      EbookSettingProgess,
       EbookSlide
+    },
+    methods: {
+      showSetting(key) {
+        this.setSettingVisible(key)
+      }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .menu-wrapper {
     position: absolute;
     bottom: 0;

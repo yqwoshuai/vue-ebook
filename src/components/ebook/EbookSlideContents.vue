@@ -5,18 +5,17 @@
         <div class="slide-contents-search-icon">
           <span class="icon-search"></span>
         </div>
-        <input type="text"
-               class="slide-contents-search-input"
-               :placeholder="$t('book.searchHint')"
+        <input class="slide-contents-search-input"
+               type="text"
                v-model="searchText"
+               :placeholder="$t('book.searchHint')"
                @keyup.enter.exact="search()"
-               @click="showSearchPage()"
-        >
+               @click="showSearchPage">
       </div>
       <div class="slide-contents-search-cancel"
-           @click="hideSearchPage()"
            v-if="searchVisible"
-      >{{$t('book.cancel')}}</div>
+           @click="hideSearchPage()">{{$t('book.cancel')}}
+      </div>
     </div>
     <div class="slide-contents-book-wrapper" v-show="!searchVisible">
       <div class="slide-contents-book-img-wrapper">
@@ -42,11 +41,9 @@
             :top="156"
             :bottom="48"
             v-show="!searchVisible">
-      <div class="slide-contents-item"
-           v-for="(item, index) in navigation"
-           :key="index"
-            @click="displayContent(item.href)">
-        <span class="slide-contents-item-label" :class="{'selected': section === index}" :style="contentItemStyle(item)">{{item.label}}</span>
+      <div class="slide-contents-item" v-for="(item, index) in navigation" :key="index">
+        <span class="slide-contents-item-label" :class="{'selected': section === index}" :style="contentItemStyle(item)"
+              @click="displayContent(item.href)">{{item.label}}</span>
         <span class="slide-contents-item-page">{{item.page}}</span>
       </div>
     </scroll>
@@ -73,7 +70,7 @@
     components: {
       Scroll
     },
-    data () {
+    data() {
       return {
         searchVisible: false,
         searchList: null,
@@ -81,7 +78,7 @@
       }
     },
     methods: {
-      search () {
+      search() {
         if (this.searchText && this.searchText.length > 0) {
           this.doSearch(this.searchText).then(list => {
             this.searchList = list
@@ -92,12 +89,15 @@
           })
         }
       },
-      doSearch (q) {
-    return Promise.all(
-      this.currentBook.spine.spineItems.map(section => section.load(this.currentBook.load.bind(this.currentBook)).then(section.find.bind(section, q)).finally(section.unload.bind(section)))
-    ).then(results => Promise.resolve([].concat.apply([], results)))
-  },
-      displayContent (target, highlight = false) {
+      doSearch(q) {
+        return Promise.all(
+          this.currentBook.spine.spineItems.map(
+            section => section.load(this.currentBook.load.bind(this.currentBook))
+              .then(section.find.bind(section, q))
+              .finally(section.unload.bind(section)))
+        ).then(results => Promise.resolve([].concat.apply([], results)))
+      },
+      displayContent(target, highlight = false) {
         this.display(target, () => {
           this.hideTitleAndMenu()
           if (highlight) {
@@ -105,25 +105,26 @@
           }
         })
       },
-      hideSearchPage () {
+      contentItemStyle(item) {
+        return {
+          marginLeft: `${px2rem(item.level * 15)}rem`
+        }
+      },
+      showSearchPage() {
+        this.searchVisible = true
+      },
+      hideSearchPage() {
         this.searchVisible = false
         this.searchText = ''
         this.searchList = null
-      },
-      showSearchPage () {
-        this.searchVisible = true
-      },
-      contentItemStyle (item) {
-        return {
-          marginLeft: `${px2rem(item.level) * 15}rem`
-        }
       }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .ebook-slide-contents {
     width: 100%;
     font-size: 0;
@@ -131,24 +132,24 @@
       display: flex;
       width: 100%;
       height: px2rem(36);
-      margin: px2rem(20) 0 px2rem(10);
+      margin: px2rem(20) 0 px2rem(10) 0;
       padding: 0 px2rem(15);
       box-sizing: border-box;
       .slide-contents-search-input-wrapper {
         flex: 1;
-        border: px2rem(1) solid rgba(0,0,0,.1);
         @include center;
         .slide-contents-search-icon {
           flex: 0 0 px2rem(28);
           font-size: px2rem(12);
-          @include center
+          @include center;
         }
         .slide-contents-search-input {
           flex: 1;
           width: 100%;
-          hanging-punctuation: px2rem(32);
+          height: px2rem(32);
+          font-size: px2rem(14);
           background: transparent;
-          border:none;
+          border: none;
           &:focus {
             outline: none;
           }
@@ -157,14 +158,14 @@
       .slide-contents-search-cancel {
         flex: 0 0 px2rem(50);
         font-size: px2rem(14);
-        @include right
+        @include right;
       }
     }
     .slide-contents-book-wrapper {
       display: flex;
       width: 100%;
       height: px2rem(90);
-      padding: px2rem(10) px2rem(15) px2rem(20);
+      padding: px2rem(10) px2rem(15) px2rem(20) px2rem(15);
       box-sizing: border-box;
       .slide-contents-book-img-wrapper {
         flex: 0 0 px2rem(45);
@@ -176,22 +177,24 @@
       .slide-contents-book-info-wrapper {
         flex: 1;
         padding: 0 px2rem(10);
-        /*width: px2rem(153.75);*/
         box-sizing: border-box;
         .slide-contents-book-title {
+          // width: px2rem(153.75);
           font-size: px2rem(14);
           line-height: px2rem(16);
           @include left;
-          margin-bottom: px2rem(5);
           .slide-contents-book-title-text {
-            @include ellipsis2(2)
+            @include ellipsis2(3);
           }
         }
         .slide-contents-book-author {
+          // width: px2rem(153.75);
           font-size: px2rem(12);
           line-height: px2rem(14);
+          margin-top: px2rem(5);
+          @include left;
           .slide-contents-book-author-text {
-            @include ellipsis2(1)
+            @include ellipsis2(1);
           }
         }
       }
@@ -210,8 +213,8 @@
           }
         }
         .slide-contents-book-time {
-          margin-top: px2rem(5);
           font-size: px2rem(12);
+          margin-top: px2rem(5);
         }
       }
     }
@@ -221,11 +224,12 @@
       .slide-contents-item {
         display: flex;
         padding: px2rem(20) 0;
+        box-sizing: border-box;
         .slide-contents-item-label {
           flex: 1;
           font-size: px2rem(14);
           line-height: px2rem(16);
-          @include ellipsis
+          @include ellipsis;
         }
         .slide-contents-item-page {
           flex: 0 0 px2rem(30);

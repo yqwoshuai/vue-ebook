@@ -1,10 +1,10 @@
 <template>
   <div class="store-shelf">
     <shelf-title :title="shelfCategory.title"></shelf-title>
-    <scroll :top="0"
-            class="store-shelf-scroll-wrapper"
-            @onScroll="onScroll"
+    <scroll class="store-shelf-scroll-wrapper"
+            :top="0"
             :bottom="scrollBottom"
+            @onScroll="onScroll"
             ref="scroll"
             v-if="ifShowList">
       <shelf-list :top="42" :data="shelfCategory.itemList"></shelf-list>
@@ -22,11 +22,12 @@
   import Scroll from '../../components/common/Scroll'
   import ShelfList from '../../components/shelf/ShelfList'
   import ShelfFooter from '../../components/shelf/ShelfFooter'
+
   export default {
     mixins: [storeShelfMixin],
     components: {
-      ShelfTitle,
       Scroll,
+      ShelfTitle,
       ShelfList,
       ShelfFooter
     },
@@ -38,18 +39,19 @@
         })
       }
     },
-    data () {
+    computed: {
+      ifShowList() {
+        return this.shelfCategory.itemList &&
+          this.shelfCategory.itemList.length > 0
+      }
+    },
+    data() {
       return {
         scrollBottom: 0
       }
     },
-    computed: {
-      ifShowList() {
-        return this.shelfCategory.itemList && this.shelfCategory.itemList.length > 0
-      }
-    },
     methods: {
-      onScroll (offsetY) {
+      onScroll(offsetY) {
         this.setOffsetY(offsetY)
       }
     },
@@ -60,9 +62,10 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .store-shelf{
+
+  .store-shelf {
     position: relative;
     z-index: 100;
     width: 100%;
@@ -73,10 +76,11 @@
       top: 0;
       left: 0;
       z-index: 101;
-      width: 100%;
     }
-    .store-shelf-empty-view{
+    .store-shelf-empty-view {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       height: 100%;
       font-size: px2rem(14);

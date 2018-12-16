@@ -5,8 +5,7 @@
            :class="{'is-add': item.edit  ? item.edit === 1 : false}"
            v-for="(item, index) in categoryList"
            :key="index"
-           @click="onGroupClick(item)"
-           v-show="(item.edit === 2 && isInGroup) || item.edit !== 2 || !item.edit">
+           @click="onGroupClick(item)">
         <div class="dialog-list-item-text">{{item.title}}</div>
         <div class="dialog-list-icon-wrapper" v-if="isInGroup && shelfCategory.id === item.id">
           <span class="icon-check"></span>
@@ -40,6 +39,7 @@
   import { storeShelfMixin } from '../../utils/mixin'
   import { removeAddFromShelf, appendAddToShelf } from '../../utils/store'
   import { saveBookShelf } from '../../utils/localStorage'
+
   export default {
     name: 'group-dialog',
     mixins: [storeShelfMixin],
@@ -73,7 +73,7 @@
         return this.shelfList.filter(item => item.type === 2)
       },
       categoryList() {
-        return [...this.defaultCategory, ...this.category]
+        return [...this.defaultCategory, ...this.category].filter(item => (item.edit === 2 && this.isInGroup) || item.edit !== 2 || !item.edit)
       },
       title() {
         return !this.ifNewGroup ? this.$t('shelf.moveBook') : this.$t('shelf.newGroup')
@@ -128,7 +128,7 @@
             this.onComplete()
           })
       },
-      moveOutFromGroup(item) {
+      moveOutFromGroup() {
         this.moveOutOfGroup(this.onComplete)
       },
       createNewGroup() {
@@ -165,6 +165,7 @@
 
 <style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .dialog-list-wrapper {
     width: 100%;
     padding: 0 px2rem(20);
@@ -195,6 +196,7 @@
       }
     }
   }
+
   .dialog-new-group-wrapper {
     width: 100%;
     padding: 0 px2rem(20);
@@ -233,10 +235,12 @@
       }
     }
   }
+
   .group-dialog-btn-wrapper {
     width: 100%;
     @include center;
   }
+
   .dialog-btn {
     flex: 1;
     &.is-empty {

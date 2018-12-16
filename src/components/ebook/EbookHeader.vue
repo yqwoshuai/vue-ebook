@@ -4,15 +4,17 @@
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
   import { ebookMixin } from '../../utils/mixin'
+
   export default {
     mixins: [ebookMixin]
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
+
   .ebook-header {
     position: absolute;
     top: 0;

@@ -8,9 +8,9 @@
   export default {}
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .store{
+  .store {
     width: 100%;
     height: 100%;
     background: white;

@@ -29,7 +29,7 @@
       data: Object
     },
     methods: {
-      showBookCategory () {
+      showBookCategory() {
         this.$router.push({
           path: '/store/list',
           query: {
@@ -38,7 +38,7 @@
           }
         })
       },
-      categoryText (category) {
+      categoryText(category) {
         return categoryText(category, this)
       }
     }

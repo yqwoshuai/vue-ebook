@@ -1,22 +1,24 @@
 <template>
-  <div class="shelf-search-wrapper" :class="{'search-top':ifInputClick,'hide-shadow': ifHideShadow}">
-    <div class="shelf-search" :class="{'search-top':ifInputClick}">
+  <div class="shelf-search-wrapper" :class="{'search-top': ifInputClicked, 'hide-shadow': ifHideShadow}">
+    <div class="shelf-search" :class="{'search-top': ifInputClicked}">
       <div class="search-wrapper">
         <div class="icon-search-wrapper">
           <span class="icon-search icon"></span>
         </div>
         <div class="search-input-wrapper">
-          <input type="text"
+          <input class="search-input"
+                 type="text"
                  :placeholder="$t('shelf.search')"
-                 class="search-input"
                  @click="onSearchClick"
                  v-model="searchText">
         </div>
-        <div class="icon-clear-wrapper" @click="clearSearchText" v-show="searchText.length > 0">
+        <div class="icon-clear-wrapper"
+             v-show="searchText.length > 0"
+             @click="clearSearchText">
           <span class="icon-close-circle-fill"></span>
         </div>
       </div>
-      <div class="icon-locale-wrapper" @click="switchLocale" v-if="!ifInputClick">
+      <div class="icon-locale-wrapper" v-if="!ifInputClicked" @click="switchLocale">
         <span class="icon-cn icon" v-if="lang === 'cn'"></span>
         <span class="icon-en icon" v-else></span>
       </div>
@@ -25,7 +27,7 @@
       </div>
     </div>
     <transition name="hot-search-move">
-      <div class="shelf-search-tab-wrapper" v-if="ifInputClick">
+      <div class="shelf-search-tab-wrapper" v-if="ifInputClicked">
         <div class="shelf-search-tab-item" v-for="item in tabs" :key="item.id" @click="onTabClick(item.id)">
           <span class="shelf-search-tab-text" :class="{'is-selected': item.id === selectedTab}">{{item.text}}</span>
         </div>
@@ -35,53 +37,22 @@
 </template>
 
 <script>
-  import { storeShelfMixin } from '../../utils/mixin'
   import { setLocalStorage } from '../../utils/localStorage'
+  import { storeShelfMixin } from '../../utils/mixin'
+
   export default {
     mixins: [storeShelfMixin],
-    data() {
-      return {
-        ifInputClick: false,
-        searchText: '',
-        selectedTab: 1,
-        ifHideShadow: true
-      }
-    },
     watch: {
       offsetY(offsetY) {
-        if (offsetY > 0 && this.ifInputClick) {
-          this.ifHideShadow = false
+        if (offsetY > 0 && this.ifInputClicked) {
+          this.ifHideShadow = false // 显示阴影
         } else {
-          this.ifHideShadow = true
+          this.ifHideShadow = true // 隐藏阴影
         }
-      }
-    },
-    methods: {
-      onTabClick (id) {
-        this.selectedTab = id
-      },
-      onSearchClick () {
-        this.ifInputClick = true
-        this.setShelfTitleVisible(false)
-      },
-      onCancelClick () {
-        this.ifInputClick = false
-        this.setShelfTitleVisible(true)
-      },
-      switchLocale () {
-        if (this.lang === 'en') {
-          this.$i18n.locale = 'cn'
-        } else {
-          this.$i18n.locale = 'en'
-        }
-        setLocalStorage('locale', this.$i18n.locale)
-      },
-      clearSearchText () {
-        this.searchText = ''
       }
     },
     computed: {
-      lang () {
+      lang() {
         return this.$i18n.locale
       },
       tabs() {
@@ -100,93 +71,126 @@
           }
         ]
       }
+    },
+    data() {
+      return {
+        ifInputClicked: false,
+        searchText: '',
+        selectedTab: 1,
+        ifHideShadow: true
+      }
+    },
+    methods: {
+      onTabClick(id) {
+        this.selectedTab = id
+      },
+      clearSearchText() {
+        this.searchText = ''
+      },
+      switchLocale() {
+        if (this.lang === 'en') {
+          this.$i18n.locale = 'cn'
+        } else {
+          this.$i18n.locale = 'en'
+        }
+        setLocalStorage('locale', this.$i18n.locale)
+      },
+      onSearchClick() {
+        this.ifInputClicked = true
+        this.setShelfTitleVisible(false)
+      },
+      onCancelClick() {
+        this.ifInputClicked = false
+        this.setShelfTitleVisible(true)
+      }
     }
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .shelf-search-wrapper{
+
+  .shelf-search-wrapper {
     position: relative;
     z-index: 105;
     width: 100%;
     height: px2rem(94);
     font-size: px2rem(16);
     background: white;
-    box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0,0,0,.1);
-    &.hide-shadow{
+    box-shadow: 0 px2rem(2) px2rem(2) 0 rgba(0, 0, 0, .1);
+    &.hide-shadow {
       box-shadow: none;
     }
-    &.search-top{
+    &.search-top {
       position: fixed;
-      top: 0;
       left: 0;
+      top: 0;
     }
     .shelf-search {
       position: absolute;
       top: px2rem(42);
       left: 0;
-      width: 100%;
-      height: px2rem(52);
       z-index: 105;
       display: flex;
+      width: 100%;
+      height: px2rem(52);
       transition: top $animationTime linear;
-      &.search-top{
+      &.search-top {
         top: 0;
       }
-      .search-wrapper{
+      .search-wrapper {
         flex: 1;
         display: flex;
         margin: px2rem(8) 0 px2rem(8) px2rem(10);
         border: px2rem(1) solid #ccc;
         border-radius: px2rem(3);
-        .icon-search-wrapper{
+        .icon-search-wrapper {
           flex: 0 0 px2rem(22);
           @include right;
-          .icon-search{
+          .icon-search {
             font-size: px2rem(12);
           }
         }
-        .search-input-wrapper{
+        .search-input-wrapper {
           flex: 1;
           padding: 0 px2rem(10);
           box-sizing: border-box;
           @include center;
-          .search-input{
+          .search-input {
             width: 100%;
             font-size: px2rem(14);
             border: none;
             color: #333;
-            &:focus{
+            &:focus {
               outline: none;
             }
-            &::-webkit-input-placeholder{
+            &::-webkit-input-placeholder {
               font-size: px2rem(14);
               color: #ccc;
             }
           }
         }
-        .icon-clear-wrapper{
+        .icon-clear-wrapper {
           flex: 0 0 px2rem(24);
           @include left;
-          .icon-close-circle-fill{
+          .icon-close-circle-fill {
             font-size: px2rem(14);
             color: #ccc;
           }
         }
       }
-      .icon-locale-wrapper{
+      .icon-locale-wrapper {
         flex: 0 0 px2rem(55);
         @include center;
-        .icon-cn,.icon-en{
+        .icon-cn, .icon-en {
           font-size: px2rem(22);
           color: #666;
         }
       }
-      .cancel-btn-wrapper{
+      .cancel-btn-wrapper {
         flex: 0 0 px2rem(55);
         @include center;
-        .cancel-text{
+        .cancel-text {
           font-size: px2rem(14);
           color: $color-blue;
         }
@@ -196,17 +200,17 @@
       position: absolute;
       top: px2rem(52);
       left: 0;
-      width: 100%;
       z-index: 105;
-      height: px2rem(42);
       display: flex;
-      .shelf-search-tab-item{
+      width: 100%;
+      height: px2rem(42);
+      .shelf-search-tab-item {
         flex: 1;
         @include center;
-        .shelf-search-tab-text{
+        .shelf-search-tab-text {
           font-size: px2rem(12);
           color: #999;
-          &.is-selected{
+          &.is-selected {
             color: $color-blue;
           }
         }

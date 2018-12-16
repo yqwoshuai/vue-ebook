@@ -1,6 +1,6 @@
 <template>
   <div class="featured">
-    <title-view :label="titleText" :btn="btnText" v-if="titleVisible && data && data.length > 0"></title-view>
+    <title-view :label="titleText" :btn="btnText" v-if="titleVisible && data && data.length > 0" :btnShow="false"></title-view>
     <div class="featured-list">
       <div class="featured-item-wrapper">
         <div class="featured-item" v-for="(item, index) in data" :key="index" @click="showBookDetail(item)">
@@ -43,15 +43,15 @@
       }
     },
     computed: {
-      width () {
+      width() {
         return window.innerWidth - realPx(20) - realPx(60) + 'px'
       }
     },
     methods: {
-      categoryText (category) {
+      categoryText(category) {
         return categoryText(category, this)
       },
-      resize () {
+      resize() {
         this.$nextTick(() => {
           this.$refs.title.forEach(item => {
             item.style.width = this.width

@@ -1,10 +1,10 @@
 <template>
   <div class="store-shelf">
     <shelf-title :title="$t('shelf.title')"></shelf-title>
-    <scroll :top="0"
-            class="store-shelf-scroll-wrapper"
-            @onScroll="onScroll"
+    <scroll class="store-shelf-scroll-wrapper"
+            :top="0"
             :bottom="scrollBottom"
+            @onScroll="onScroll"
             ref="scroll">
       <shelf-search></shelf-search>
       <shelf-list :data="shelfList"></shelf-list>
@@ -20,11 +20,12 @@
   import ShelfSearch from '../../components/shelf/ShelfSearch'
   import ShelfList from '../../components/shelf/ShelfList'
   import ShelfFooter from '../../components/shelf/ShelfFooter'
+
   export default {
     mixins: [storeShelfMixin],
     components: {
-      ShelfTitle,
       Scroll,
+      ShelfTitle,
       ShelfSearch,
       ShelfList,
       ShelfFooter
@@ -37,13 +38,13 @@
         })
       }
     },
-    data () {
+    data() {
       return {
         scrollBottom: 0
       }
     },
     methods: {
-      onScroll (offsetY) {
+      onScroll(offsetY) {
         this.setOffsetY(offsetY)
       }
     },
@@ -55,9 +56,10 @@
   }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss" rel="stylesheet/scss" scoped>
   @import "../../assets/styles/global";
-  .store-shelf{
+
+  .store-shelf {
     position: relative;
     z-index: 100;
     width: 100%;
@@ -68,7 +70,6 @@
       top: 0;
       left: 0;
       z-index: 101;
-      width: 100%;
     }
   }
 </style>
